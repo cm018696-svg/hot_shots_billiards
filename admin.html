@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Admin — Tables | Hot Shots Billiards</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23050505' stroke='%23e31c3d' stroke-width='4'/%3E%3Ctext x='50' y='65' font-family='serif' font-size='40' font-weight='bold' fill='%23e31c3d' text-anchor='middle'%3E8%3C/text%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF0033;
+            --primary-glow: rgba(255, 0, 51, 0.5);
+            --accent-green: #50C878;
+            --accent-green-glow: rgba(80, 200, 120, 0.5);
+            --bg-deep: #050505;
+            --bg-dark: #0a0a0a;
+            --bg-surface: #111111;
+            --bg-elevated: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-muted: #888888;
+            --text-dim: #444444;
+            --warning: #e6b800;
+        }
+
+        body.admin-body {
+            cursor: auto;
+            overflow-x: hidden;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        /* Ambient Background */
+        .admin-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .admin-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(255, 0, 51, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(80, 200, 120, 0.05) 0%, transparent 50%);
+            animation: adminGlow 15s ease-in-out infinite;
+        }
+        @keyframes adminGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Header */
+        .admin-header-section {
+            position: relative;
+            z-index: 2;
+            padding: 1.5rem 1.25rem;
+            background: linear-gradient(180deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.8) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-shell {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* Logo & Back */
+        .admin-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .admin-logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), #cc0029);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .admin-logo-text {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: white;
+        }
+        .admin-logo-text span {
+            color: var(--primary);
+        }
+        .admin-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .admin-back:hover { 
+            color: var(--primary); 
+            background: rgba(255,0,51,0.1);
+            border-color: rgba(255,0,51,0.3);
+        }
+
+        /* Stats Cards */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .stat-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255,0,51,0.15);
+        }
+        .stat-card.available {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(80,200,120,0.15);
+        }
+        .stat-number {
+            font-family: 'Teko', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-card.active .stat-number {
+            background: linear-gradient(135deg, var(--primary) 0%, #ff4d6d 100%);
+            -webkit-background-clip: text;
+        }
+        .stat-card.available .stat-number {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #7ddea0 100%);
+            -webkit-background-clip: text;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Main Header */
+        .admin-header {
+            margin-bottom: 1.5rem;
+        }
+        .admin-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+        .admin-eyebrow::before {
+            content: '';
+            width: 20px;
+            height: 2px;
+            background: var(--accent-green);
+        }
+        .admin-header h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.02em;
+            line-height: 1;
+        }
+        .admin-header h1 em {
+            font-style: normal;
+            color: var(--primary);
+            text-shadow: 0 0 30px var(--primary-glow);
+        }
+        .admin-header p {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 40ch;
+        }
+
+        /* Legend */
+        .leyenda {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem 1.5rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .leyenda span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        .dot-empty { 
+            background: var(--accent-green); 
+            box-shadow: 0 0 12px var(--accent-green-glow);
+        }
+        .dot-busy { 
+            background: var(--primary); 
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+        .dot-warn { 
+            background: var(--warning); 
+            box-shadow: 0 0 12px rgba(230, 184, 0, 0.5);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            margin: 2rem 0 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+        }
+        .section-title span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: var(--text-dim);
+            margin-left: 0.35rem;
+        }
+
+        /* Cards Grid */
+        .mesa-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .row-card {
+            display: grid;
+            grid-template-columns: 90px 1fr auto;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font: inherit;
+            color: inherit;
+            min-width: 0;
+        }
+        .row-card:hover:not(:disabled) {
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 0, 51, 0.15);
+            transform: translateY(-2px);
+        }
+        .row-card:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        .row-card--occupied { cursor: pointer; }
+        .row-card--expired {
+            animation: card-warn-pulse 1.2s ease-in-out infinite;
+        }
+        @keyframes card-warn-pulse {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                border-color: rgba(230, 184, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(230, 184, 0, 0.2);
+                border-color: rgba(255, 204, 0, 0.5);
+            }
+        }
+
+        /* Badge */
+        .card-badge {
+            border-radius: 10px;
+            padding: 0.6rem;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .card-badge-label {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.15rem;
+        }
+        .card-badge-main {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            line-height: 1;
+            color: white;
+        }
+        .card-badge-main.mono {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .badge-tone-free {
+            background: linear-gradient(135deg, rgba(80, 200, 120, 0.15) 0%, rgba(80, 200, 120, 0.05) 100%);
+            border: 1px solid rgba(80, 200, 120, 0.3);
+        }
+        .badge-tone-free .card-badge-label { color: var(--accent-green); }
+        
+        .badge-tone-busy {
+            background: linear-gradient(135deg, rgba(255, 0, 51, 0.2) 0%, rgba(255, 0, 51, 0.08) 100%);
+            border: 1px solid rgba(255, 0, 51, 0.4);
+        }
+        .badge-tone-busy .card-badge-label { color: var(--primary); }
+        
+        .badge-tone-warn {
+            background: linear-gradient(135deg, rgba(230, 184, 0, 0.15) 0%, rgba(230, 184, 0, 0.05) 100%);
+            border: 1px solid rgba(230, 184, 0, 0.4);
+        }
+        .badge-tone-warn .card-badge-label { color: var(--warning); }
+
+        .card-body { 
+            min-width: 0; 
+            overflow: hidden;
+        }
+        .card-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .card-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .card-action {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .card-action strong {
+            color: white;
+            font-weight: 600;
+        }
+        .card-action--btn {
+            font-family: 'Teko', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #cc0029 100%);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            box-shadow: 0 0 20px var(--primary-glow);
+            transition: all 0.2s;
+        }
+        .card-action--btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0 1rem;
+        }
+        .section-header .section-title {
+            margin: 0;
+        }
+        .add-session-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #cc0029 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 0 25px var(--primary-glow);
+            transition: all 0.25s ease;
+        }
+        .add-session-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+        .add-session-btn .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        /* Enhanced Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.92);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(12px);
+        }
+        .modal-overlay.is-open { display: flex; }
+        
+        .modal-box {
+            background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-dark) 100%);
+            border: 1px solid rgba(255, 0, 51, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.7), 0 0 60px rgba(255, 0, 51, 0.15);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .modal-overlay.is-open .modal-box {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), #cc0029);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px var(--primary-glow);
+        }
+        .modal-icon .material-symbols-outlined {
+            font-size: 24px;
+            color: white;
+        }
+        .modal-box h3 {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+        .modal-box h3 span {
+            color: var(--primary);
+        }
+        .modal-box .mesa-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .modal-box label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .modal-box input,
+        .modal-box select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            background: var(--bg-deep);
+            color: white;
+            transition: all 0.2s;
+        }
+        .modal-box input::placeholder {
+            color: var(--text-dim);
+        }
+        .modal-box input:focus,
+        .modal-box select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 0, 51, 0.15);
+        }
+        .modal-box select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23888888'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 20px;
+        }
+        
+        .time-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .time-option {
+            padding: 0.6rem 0.5rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .time-option:hover {
+            border-color: var(--primary);
+            color: white;
+        }
+        .time-option.selected {
+            background: linear-gradient(135deg, var(--primary), #cc0029);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .modal-actions button {
+            flex: 1 1 120px;
+            padding: 0.85rem 1rem;
+            border-radius: 25px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .modal-actions button:active { transform: scale(0.98); }
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: var(--text-muted);
+        }
+        .btn-cancel:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--primary) 0%, #cc0029 100%);
+            color: #fff;
+            box-shadow: 0 0 24px var(--primary-glow);
+        }
+        .btn-confirm:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 0 35px var(--primary-glow);
+        }
+        .btn-danger-soft {
+            background: var(--bg-elevated);
+            color: white;
+            border: 1px solid rgba(255, 0, 51, 0.35) !important;
+        }
+        .btn-danger-soft:hover {
+            background: rgba(255, 0, 51, 0.15);
+        }
+
+        /* Quick Add Section */
+        .quick-add-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .quick-add-card {
+            background: linear-gradient(135deg, rgba(80, 200, 120, 0.1) 0%, rgba(80, 200, 120, 0.03) 100%);
+            border: 1px solid rgba(80, 200, 120, 0.25);
+            border-radius: 12px;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-add-card:hover {
+            background: linear-gradient(135deg, rgba(80, 200, 120, 0.2) 0%, rgba(80, 200, 120, 0.08) 100%);
+            border-color: rgba(80, 200, 120, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(80, 200, 120, 0.2);
+        }
+        .quick-add-card.disabled {
+            background: rgba(255,255,255,0.02);
+            border-color: rgba(255,255,255,0.05);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .quick-add-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .quick-add-card .table-num {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+        .quick-add-card.disabled .table-num {
+            color: var(--text-dim);
+        }
+        .quick-add-card .table-status {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+        .quick-add-card .add-icon {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            margin-top: 0.25rem;
+        }
+        .quick-add-card.disabled .add-icon {
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 560px) {
+            .row-card {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .card-action {
+                justify-content: flex-start;
+            }
+            .admin-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            .add-session-btn {
+                justify-content: center;
+            }
+            .quick-add-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .time-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .card-action--btn-warn {
+            font-family: 'Teko', sans-serif;
+            background: linear-gradient(135deg, var(--warning) 0%, #b8860b 100%);
+            color: #0a0a0a;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            box-shadow: 0 0 18px rgba(230, 184, 0, 0.35);
+        }
+
+        /* Activity & Reservations */
+        .content-shell {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .actividad-panel { margin-top: 0.5rem; }
+        .actividad-list { 
+            list-style: none; 
+            max-height: 350px; 
+            overflow-y: auto; 
+            padding-right: 4px;
+        }
+        .actividad-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .actividad-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+            border-radius: 2px;
+        }
+        .actividad-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+        .actividad-list .row-card { cursor: default; }
+        .actividad-list .row-card:hover { 
+            transform: none; 
+            border-color: rgba(255,255,255,0.08); 
+        }
+        
+        .badge-tone-activity-1 {
+            background: linear-gradient(135deg, rgba(255, 0, 51, 0.15) 0%, rgba(255, 0, 51, 0.05) 100%);
+            border: 1px solid rgba(255, 0, 51, 0.3);
+        }
+        .badge-tone-activity-1 .card-badge-label { color: var(--primary); }
+        .badge-tone-activity-2 {
+            background: linear-gradient(135deg, rgba(80, 200, 120, 0.1) 0%, rgba(80, 200, 120, 0.03) 100%);
+            border: 1px solid rgba(80, 200, 120, 0.25);
+        }
+        .badge-tone-activity-2 .card-badge-label { color: var(--accent-green); }
+        .badge-tone-activity-3 {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .badge-tone-activity-3 .card-badge-label { color: var(--text-muted); }
+        .badge-tone-activity-4 {
+            background: var(--bg-elevated);
+            border: 1px solid rgba(80, 200, 120, 0.15);
+        }
+        .badge-tone-activity-4 .card-badge-label { color: var(--accent-green); }
+
+        .actividad-empty,
+        .reservas-empty {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .reservas-panel {
+            margin-top: 1.5rem;
+        }
+        .reservas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            list-style: none;
+        }
+        .reserva-card {
+            display: grid;
+            grid-template-columns: 90px 1fr auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(80, 200, 120, 0.05) 0%, rgba(80, 200, 120, 0.01) 100%);
+            border: 1px solid rgba(80, 200, 120, 0.15);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        .reserva-card:hover {
+            border-color: rgba(80, 200, 120, 0.3);
+            box-shadow: 0 0 20px rgba(80, 200, 120, 0.1);
+        }
+        .reserva-date {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.3rem;
+            color: var(--accent-green);
+            letter-spacing: 0.03em;
+            text-align: center;
+        }
+        .reserva-date small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.2rem;
+        }
+        .reserva-info h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.2rem;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .reserva-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .reserva-action {
+            font-family: 'Teko', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #3da85f 100%);
+            color: #000;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 15px var(--accent-green-glow);
+            transition: all 0.2s;
+        }
+        .reserva-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--accent-green-glow);
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <div class="admin-bg"></div>
+    
+    <header class="admin-header-section">
+        <div class="admin-shell">
+            <div class="admin-top">
+                <div class="admin-logo">
+                    <div class="admin-logo-icon">8</div>
+                    <span class="admin-logo-text">Hot <span>Shots</span></span>
+                </div>
+                <a href="index.html" class="admin-back">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+                    Back to site
+                </a>
+            </div>
+            
+            <div class="admin-stats" id="admin-stats">
+                <div class="stat-card" id="stat-total">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Total Tables</div>
+                </div>
+                <div class="stat-card available" id="stat-available">
+                    <div class="stat-number" id="stat-avail-count">0</div>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div class="stat-card active" id="stat-active">
+                    <div class="stat-number" id="stat-active-count">0</div>
+                    <div class="stat-label">In Play</div>
+                </div>
+            </div>
+
+            <header class="admin-header">
+                <p class="admin-eyebrow">Staff Dashboard</p>
+                <h1>Table <em>Floor</em></h1>
+                <p>Manage tables and reservations in real-time.</p>
+            </header>
+
+            <div class="leyenda">
+                <span><i class="dot dot-empty"></i> Available</span>
+                <span><i class="dot dot-busy"></i> In Use</span>
+                <span><i class="dot dot-warn"></i> Time's Up</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-shell">
+        <div class="section-header">
+            <h2 class="section-title">Tables <span id="mesa-count-hint"></span></h2>
+            <button type="button" class="add-session-btn" id="add-session-btn">
+                <span class="material-symbols-outlined">add</span>
+                New Session
+            </button>
+        </div>
+        <div class="mesa-stack" id="mesas-grid" aria-live="polite"></div>
+
+        <section class="reservas-panel">
+            <h2 class="section-title">Upcoming Reservations <span id="reservas-count"></span></h2>
+            <ul class="reservas-list" id="reservas-list"></ul>
+            <p class="reservas-empty" id="reservas-empty" hidden>No upcoming reservations.</p>
+        </section>
+
+        <section class="actividad-panel">
+            <h2 class="section-title">Today's Activity <span id="fecha-hoy"></span></h2>
+            <ul class="actividad-list" id="actividad-list"></ul>
+            <p class="actividad-empty" id="actividad-empty" hidden>No activity recorded for today.</p>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="modal-manual" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <span class="material-symbols-outlined">sports_bar</span>
+                </div>
+                <h3 id="modal-title">New <span>Session</span></h3>
+            </div>
+            <p class="mesa-info" id="modal-mesa-line">Select a table and enter customer details</p>
+            
+            <div class="form-group">
+                <label for="table-select">Select Table</label>
+                <select id="table-select">
+                    <option value="">-- Choose a table --</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="client-name">Guest Name</label>
+                <input type="text" id="client-name" placeholder="Enter customer name" autocomplete="off" />
+            </div>
+            
+            <div class="form-group">
+                <label>Play Duration</label>
+                <div class="time-options">
+                    <button type="button" class="time-option" data-time="30">30 min</button>
+                    <button type="button" class="time-option selected" data-time="60">60 min</button>
+                    <button type="button" class="time-option" data-time="90">90 min</button>
+                    <button type="button" class="time-option" data-time="120">120 min</button>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" id="modal-cancel">Cancel</button>
+                <button type="button" class="btn-confirm" id="modal-confirm">
+                    <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">check</span>
+                    Start Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-release" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-icon" style="background: linear-gradient(135deg, var(--warning), #b8860b);">
+                    <span class="material-symbols-outlined">schedule</span>
+                </div>
+                <h3 id="release-title">Table <span>In Play</span></h3>
+            </div>
+            <p class="mesa-info" id="release-info"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" id="release-close">Keep Playing</button>
+                <button type="button" class="btn-danger-soft" id="release-btn">
+                    <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">logout</span>
+                    Release Table
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/table-state.js"></script>
+    <script>
+        (function () {
+            var HS = window.HotShotsClub;
+            var grid = document.getElementById('mesas-grid');
+            var actList = document.getElementById('actividad-list');
+            var actEmpty = document.getElementById('actividad-empty');
+            var fechaHoy = document.getElementById('fecha-hoy');
+
+            var modalManual = document.getElementById('modal-manual');
+            var modalRelease = document.getElementById('modal-release');
+            var selectedTableId = null;
+            var selectedTime = 60;
+            var releaseTableId = null;
+
+            // Add Session button handler
+            document.getElementById('add-session-btn').addEventListener('click', function() {
+                renderMesas(); // Refresh table list
+                openModal(modalManual);
+            });
+
+            // Time options handler
+            document.querySelectorAll('.time-option').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.time-option').forEach(function(b) { b.classList.remove('selected'); });
+                    this.classList.add('selected');
+                    selectedTime = parseInt(this.dataset.time, 10);
+                });
+            });
+
+            fechaHoy.textContent = '(' + HS.todayYMD() + ')';
+
+            function openModal(el) { el.classList.add('is-open'); }
+            function closeModal(el) { el.classList.remove('is-open'); }
+
+            function el(tag, cls, html) {
+                var n = document.createElement(tag);
+                if (cls) n.className = cls;
+                if (html != null) n.innerHTML = html;
+                return n;
+            }
+
+            function renderMesas() {
+                HS.tick();
+                var state = HS.load();
+                grid.innerHTML = '';
+                
+                var availableCount = 0;
+                var activeCount = 0;
+                
+                state.tables.forEach(function (t) {
+                    if (t.status === 'empty') availableCount++;
+                    if (t.status === 'occupied' || t.status === 'expired') activeCount++;
+                });
+                
+                document.getElementById('stat-avail-count').textContent = availableCount;
+                document.getElementById('stat-active-count').textContent = activeCount;
+                
+                // Update table select dropdown
+                var tableSelect = document.getElementById('table-select');
+                var currentValue = tableSelect.value;
+                tableSelect.innerHTML = '<option value="">-- Choose a table --</option>';
+                state.tables.forEach(function(t) {
+                    if (t.status === 'empty') {
+                        var opt = document.createElement('option');
+                        opt.value = t.id;
+                        opt.textContent = 'Table ' + t.id + ' - Available';
+                        tableSelect.appendChild(opt);
+                    }
+                });
+                // Restore selection if still available
+                if (currentValue) {
+                    var optionExists = false;
+                    for (var i = 0; i < tableSelect.options.length; i++) {
+                        if (tableSelect.options[i].value === currentValue) {
+                            optionExists = true;
+                            break;
+                        }
+                    }
+                    if (optionExists) {
+                        tableSelect.value = currentValue;
+                    }
+                }
+                
+                state.tables.forEach(function (t) {
+                    var card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = 'row-card';
+                    card.dataset.tableId = t.id;
+
+                    var badge = el('div', 'card-badge');
+                    var badgeLabel = el('span', 'card-badge-label', 'TODAY');
+                    var badgeMain = el('span', 'card-badge-main');
+
+                    var body = el('div', 'card-body');
+                    var title = el('div', 'card-title');
+                    var desc = el('div', 'card-desc');
+                    var action = el('div', 'card-action');
+
+                    if (t.status === 'empty') {
+                        badge.classList.add('badge-tone-free');
+                        badgeMain.textContent = 'Table ' + t.id;
+                        title.textContent = 'Available';
+                        desc.textContent = 'Click to start a timed manual session.';
+                        action.innerHTML = '<span class="card-action--btn">+ Assign session</span>';
+                        card.appendChild(badge);
+                        badge.appendChild(badgeLabel);
+                        badge.appendChild(badgeMain);
+                        card.appendChild(body);
+                        body.appendChild(title);
+                        body.appendChild(desc);
+                        card.appendChild(action);
+                        card.addEventListener('click', function () {
+                            selectedTableId = t.id;
+                            document.getElementById('modal-mesa-line').textContent = 'Table ' + t.id + ' - Ready for customer';
+                            document.getElementById('table-select').value = t.id;
+                            document.getElementById('client-name').value = '';
+                            document.getElementById('client-name').focus();
+                            openModal(modalManual);
+                        });
+                    } else if (t.status === 'occupied') {
+                        card.classList.add('row-card--occupied');
+                        badge.classList.add('badge-tone-busy');
+                        badgeMain.classList.add('mono');
+                        var rs = HS.remainingSeconds(t);
+                        badgeMain.textContent = HS.formatCountdown(rs);
+                        title.textContent = t.clientName || 'Guest';
+                        desc.textContent = 'Session in progress · Table ' + t.id + ' · ' + (t.durationMinutes || '—') + ' min';
+                        action.innerHTML = '<strong>Manage</strong>';
+                        card.appendChild(badge);
+                        badge.appendChild(badgeLabel);
+                        badge.appendChild(badgeMain);
+                        card.appendChild(body);
+                        body.appendChild(title);
+                        body.appendChild(desc);
+                        card.appendChild(action);
+                        card.addEventListener('click', function () {
+                            releaseTableId = t.id;
+                            document.getElementById('release-title').textContent = 'Table ' + t.id;
+                            document.getElementById('release-info').textContent =
+                                (t.clientName || 'Guest') + ' · Time left: ' + HS.formatCountdown(HS.remainingSeconds(t));
+                            openModal(modalRelease);
+                        });
+                    } else if (t.status === 'expired') {
+                        card.classList.add('row-card--expired');
+                        badge.classList.add('badge-tone-warn');
+                        badgeMain.textContent = 'Table ' + t.id;
+                        badgeLabel.textContent = 'ALERT';
+                        title.textContent = t.clientName || 'Guest';
+                        desc.textContent = 'Session ended. Release the table for the next group.';
+                        action.innerHTML = '<span class="card-action--btn-warn">Release</span>';
+                        card.appendChild(badge);
+                        badge.appendChild(badgeLabel);
+                        badge.appendChild(badgeMain);
+                        card.appendChild(body);
+                        body.appendChild(title);
+                        body.appendChild(desc);
+                        card.appendChild(action);
+                        card.addEventListener('click', function () {
+                            HS.releaseTable(t.id);
+                            renderAll();
+                        });
+                    }
+
+                    grid.appendChild(card);
+                });
+            }
+
+            function formatTime(ts) {
+                var d = new Date(ts);
+                return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function typeLabel(type) {
+                if (type === 'web_reservation') return 'Web booking';
+                if (type === 'manual_occupation') return 'Manual session';
+                if (type === 'manual_release') return 'Table released';
+                return 'Event';
+            }
+
+            var toneClasses = ['badge-tone-activity-1', 'badge-tone-activity-2', 'badge-tone-activity-3', 'badge-tone-activity-4'];
+
+            function renderActividad() {
+                var items = HS.activityForDay(HS.todayYMD());
+                actList.innerHTML = '';
+                if (items.length === 0) {
+                    actEmpty.hidden = false;
+                    return;
+                }
+                actEmpty.hidden = true;
+                items.forEach(function (a, i) {
+                    var li = document.createElement('li');
+                    var row = el('div', 'row-card');
+                    row.setAttribute('role', 'presentation');
+
+                    var badge = el('div', 'card-badge ' + toneClasses[i % toneClasses.length]);
+                    var badgeLabel = el('span', 'card-badge-label', 'TODAY');
+                    var badgeMain = el('span', 'card-badge-main mono', formatTime(a.createdAt));
+
+                    var body = el('div', 'card-body');
+                    var title = el('div', 'card-title', typeLabel(a.type));
+                    var desc = el('div', 'card-desc', a.label || '');
+
+                    var action = el('div', 'card-action', '+ Log');
+
+                    row.appendChild(badge);
+                    badge.appendChild(badgeLabel);
+                    badge.appendChild(badgeMain);
+                    row.appendChild(body);
+                    body.appendChild(title);
+                    body.appendChild(desc);
+                    row.appendChild(action);
+
+                    li.appendChild(row);
+                    actList.appendChild(li);
+                });
+            }
+
+            function formatReservaDate(dayKey) {
+                var d = new Date(dayKey + 'T00:00:00');
+                var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate();
+            }
+
+            function renderReservas() {
+                var reservas = HS.getUpcomingReservations(2);
+                var list = document.getElementById('reservas-list');
+                var empty = document.getElementById('reservas-empty');
+                var count = document.getElementById('reservas-count');
+                list.innerHTML = '';
+                if (reservas.length === 0) {
+                    empty.hidden = false;
+                    count.textContent = '';
+                    return;
+                }
+                empty.hidden = true;
+                count.textContent = '(' + reservas.length + ')';
+                reservas.forEach(function (r) {
+                    var payload = r.payload || {};
+                    var li = document.createElement('li');
+                    var card = el('div', 'reserva-card');
+                    var dateDiv = el('div', 'reserva-date', formatReservaDate(r.dayKey) + '<br><small>' + (payload.time || '') + '</small>');
+                    var infoDiv = el('div', 'reserva-info');
+                    infoDiv.innerHTML = '<h4>' + (payload.name || 'Guest') + '</h4><p>' + (payload.players || '2') + ' players · ' + (payload.tableId ? 'Table ' + payload.tableId : 'Any table') + '</p>';
+                    var btn = el('button', 'reserva-action', 'Check in');
+                    btn.type = 'button';
+                    btn.dataset.reservaId = r.id;
+                    btn.addEventListener('click', function () {
+                        var tableId = payload.tableId ? parseInt(payload.tableId, 10) : null;
+                        if (tableId) {
+                            var state = HS.load();
+                            var t = state.tables[tableId - 1];
+                            if (t && t.status === 'empty') {
+                                var confirmed = confirm('Start session for ' + (payload.name || 'Guest') + ' on Table ' + tableId + ' for 60 min?');
+                                if (confirmed) {
+                                    HS.startManualOccupation(tableId, payload.name || 'Guest', 60);
+                                    renderAll();
+                                }
+                            } else {
+                                alert('Table ' + tableId + ' is not available. Please assign a different table manually.');
+                            }
+                        } else {
+                            alert('Please assign a table manually from the Tables section.');
+                        }
+                    });
+                    card.appendChild(dateDiv);
+                    card.appendChild(infoDiv);
+                    card.appendChild(btn);
+                    li.appendChild(card);
+                    list.appendChild(li);
+                });
+            }
+
+            function renderAll() {
+                renderMesas();
+                renderReservas();
+                renderActividad();
+            }
+
+            document.getElementById('modal-cancel').addEventListener('click', function () {
+                closeModal(modalManual);
+                selectedTableId = null;
+            });
+            document.getElementById('modal-confirm').addEventListener('click', function () {
+                var tableId = parseInt(document.getElementById('table-select').value, 10);
+                var name = document.getElementById('client-name').value.trim();
+                
+                if (!tableId) {
+                    alert('Please select a table.');
+                    return;
+                }
+                if (!name) {
+                    alert('Please enter the guest name.');
+                    return;
+                }
+                
+                var r = HS.startManualOccupation(tableId, name, selectedTime);
+                if (!r.ok) {
+                    alert('Could not assign the table (it may no longer be available).');
+                }
+                
+                closeModal(modalManual);
+                document.getElementById('client-name').value = '';
+                document.getElementById('table-select').value = '';
+                selectedTableId = null;
+                renderAll();
+            });
+
+            document.getElementById('release-close').addEventListener('click', function () {
+                closeModal(modalRelease);
+                releaseTableId = null;
+            });
+            document.getElementById('release-btn').addEventListener('click', function () {
+                if (releaseTableId) HS.releaseTable(releaseTableId);
+                closeModal(modalRelease);
+                releaseTableId = null;
+                renderAll();
+            });
+
+            modalManual.addEventListener('click', function (e) {
+                if (e.target === modalManual) {
+                    closeModal(modalManual);
+                    selectedTableId = null;
+                }
+            });
+            modalRelease.addEventListener('click', function (e) {
+                if (e.target === modalRelease) closeModal(modalRelease);
+            });
+
+            window.addEventListener('storage', function (e) {
+                if (e.key === 'hotshots_club_state_v1') renderAll();
+            });
+            window.addEventListener('hotshots-club-update', renderAll);
+
+            setInterval(function () {
+                HS.tick();
+                renderMesas();
+            }, 1000);
+
+            renderAll();
+        })();
+    </script>
+</body>
+</html>

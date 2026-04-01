@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Confirmed | Hot Shots Billiards Club</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23050505' stroke='%23e31c3d' stroke-width='4'/%3E%3Ctext x='50' y='65' font-family='serif' font-size='40' font-weight='bold' fill='%23e31c3d' text-anchor='middle'%3E8%3C/text%3E%3C/svg%3E">
+    <style>
+        .success-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+
+        .success-page::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.9)),
+                url('imagenes/gallery_1.jpg') center/cover no-repeat fixed;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .success-container {
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+        }
+
+        .success-card {
+            background: rgba(17, 17, 17, 0.95);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--green) 0%, transparent 50%);
+            opacity: 0.05;
+            transform: translate(40%, -40%) rotate(45deg);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--green);
+            border-radius: 50%;
+            animation: successPulse 2s ease infinite;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+        }
+
+        .success-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(57, 255, 20, 0.4);
+            }
+            50% { 
+                box-shadow: 0 0 0 15px rgba(57, 255, 20, 0);
+            }
+        }
+
+        .success-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.5rem, 7vw, 3.5rem);
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.05em;
+        }
+
+        .success-subtitle {
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+        }
+
+        .success-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--red);
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 15px var(--red);
+        }
+
+        .success-details {
+            background: var(--bg-deep);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .success-order {
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .success-order-id {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            letter-spacing: 0.1em;
+        }
+
+        .success-info {
+            margin-top: 1.25rem;
+            text-align: left;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .success-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+        }
+
+        .success-info-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .success-info-row span:last-child {
+            color: var(--text-primary);
+        }
+
+        .success-info-row .status {
+            color: var(--green);
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        }
+
+        .success-cta {
+            margin-top: 1.5rem;
+        }
+
+        .success-cta .btn-primary {
+            width: 100%;
+        }
+
+        .success-note {
+            margin-top: 1.25rem;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Atmospheric Overlays -->
+    <div class="atmosphere"></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+
+    <main class="success-page">
+        <div class="success-container">
+            <div class="success-card">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+
+                <h1 class="success-title">Reserved!</h1>
+                <p class="success-subtitle">See You Tonight</p>
+                <div class="success-divider"></div>
+
+                <div class="success-details">
+                    <p class="success-order">Reservation ID</p>
+                    <p class="success-order-id" id="order-id">HSB-0000-0</p>
+
+                    <div class="success-info">
+                        <div class="success-info-row">
+                            <span>Status</span>
+                            <span class="status">Confirmed</span>
+                        </div>
+                        <div class="success-info-row">
+                            <span>Table</span>
+                            <span>Professional Pool Table</span>
+                        </div>
+                        <div class="success-info-row">
+                            <span>Venue</span>
+                            <span>Hot Shots Billiards</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-cta">
+                    <a href="index.html" class="btn-primary">RETURN TO HOME</a>
+                </div>
+
+                <p class="success-note">Confirmation sent to your email</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.12;
+            cursorY += (mouseY - cursorY) * 0.12;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        const hoverElements = document.querySelectorAll('a, button');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        document.addEventListener('mousedown', () => cursor.classList.add('click'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('click'));
+
+        if ('ontouchstart' in window) {
+            cursor.style.display = 'none';
+            cursorDot.style.display = 'none';
+        }
+
+        // Generate Order ID
+        function generateOrderID() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let id = 'HSB-';
+            for (let i = 0; i < 4; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            id += '-' + chars.charAt(Math.floor(Math.random() * chars.length));
+            return id;
+        }
+
+        document.getElementById('order-id').textContent = generateOrderID();
+    </script>
+</body>
+</html>
