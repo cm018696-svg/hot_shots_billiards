@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <title>Hot Shots Billiards | Premier Pool Hall &amp; Lounge</title>
     
     <!-- Preconnect para CDN externos -->
@@ -24,6 +24,7 @@
     <script>
         tailwind.config = {
             darkMode: "class",
+            safelist: ['translate-x-0'],
             theme: {
                 extend: {
                     colors: {
@@ -104,7 +105,7 @@
     </nav>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-[200] hidden">
+    <div id="mobile-menu" class="fixed inset-0 z-[10000] hidden">
         <div id="mobile-menu-overlay" class="absolute inset-0 bg-black/80 opacity-0 transition-opacity duration-300"></div>
         <div id="mobile-menu-panel" class="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-surface-dark border-l border-primary/30 transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto">
             <div class="flex justify-end p-4">
