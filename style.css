@@ -35,6 +35,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Hero: estable altura en móviles (barras URL / notch) */
+.site-hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
+}
+
 body {
     font-family: 'Barlow', sans-serif;
     background-color: var(--bg-deep);
@@ -1414,7 +1421,7 @@ img, video, iframe, canvas {
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .slide-left {
@@ -1425,7 +1432,7 @@ img, video, iframe, canvas {
 .slide-left.visible {
     opacity: 1;
     transform: translateX(0);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .slide-right {
@@ -1436,7 +1443,7 @@ img, video, iframe, canvas {
 .slide-right.visible {
     opacity: 1;
     transform: translateX(0);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -1879,10 +1886,28 @@ img, video, iframe, canvas {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .animate-bounce,
+    .animate-ping,
+    .animate-pulse,
+    .preloader-line,
+    .particle {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    }
+
+    .fade-in,
+    .slide-left,
+    .slide-right,
+    .fade-in.visible,
+    .slide-left.visible,
+    .slide-right.visible {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 }
 
