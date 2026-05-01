@@ -39,7 +39,6 @@ html {
 .site-hero {
     min-height: 100vh;
     min-height: 100svh;
-    min-height: 100dvh;
 }
 
 body {
@@ -1871,6 +1870,18 @@ img, video, iframe, canvas {
 }
 
 @media (hover: none) and (pointer: coarse) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .site-hero {
+        /*
+         * Evita saltos al hacer scroll en mobile:
+         * dvh se recalcula cuando cambia la barra URL.
+         */
+        min-height: 100svh;
+    }
+
     .cursor, .cursor-dot {
         display: none;
     }
