@@ -55,11 +55,6 @@ img, video, iframe, canvas {
     height: auto;
 }
 
-img[loading="lazy"] {
-    content-visibility: auto;
-    contain-intrinsic-size: 550px 350px;
-}
-
 ::selection {
     background: var(--red);
     color: white;
