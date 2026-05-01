@@ -55,6 +55,11 @@ img, video, iframe, canvas {
     height: auto;
 }
 
+img[loading="lazy"] {
+    content-visibility: auto;
+    contain-intrinsic-size: 550px 350px;
+}
+
 ::selection {
     background: var(--red);
     color: white;
@@ -1882,6 +1887,26 @@ img, video, iframe, canvas {
     a, button {
         min-height: 44px;
         min-width: 44px;
+    }
+
+    .touch-optimized .glare-card {
+        transform: none !important;
+        perspective: 0 !important;
+    }
+
+    .touch-optimized .glare-card-inner,
+    .touch-optimized .glare-card:hover .glare-card-inner {
+        transform: none !important;
+    }
+
+    .touch-optimized .glare-card-image,
+    .touch-optimized .glare-card:hover .glare-card-image {
+        transform: none !important;
+        filter: none !important;
+    }
+
+    .touch-optimized .glare-card-shine {
+        opacity: 0.16 !important;
     }
 }
 
